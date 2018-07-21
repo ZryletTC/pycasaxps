@@ -1,3 +1,6 @@
 __pycache__
 /pycasaxps/__pycache__/
 /examples/.ipynb_checkpoints/
+/build/
+/dist/
+/pycasaxps.egg-info/
