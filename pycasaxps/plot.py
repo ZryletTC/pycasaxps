@@ -24,7 +24,7 @@ class casa_data():
 		else:
 			self.components = []
 		self.data.rename({'B.E.':'BE'},axis=1,inplace=True)
-		
+
 	@property
 	def peaks(self):
 		'''
@@ -35,7 +35,7 @@ class casa_data():
 			idx = self.data[comp].idxmax()
 			peaks[comp] = (self.data['BE'][idx],self.data[comp][idx])
 		return peaks
-		
+
 	def rename(self, components, cycles=None):
 		'''
 		Rename columns in dataframe. 
@@ -54,14 +54,18 @@ class casa_data():
 		else:
 			for i,c in enumerate(self.cycles):
 				rename[c] = cycles[i]
-		
+
 		for c,cname in zip(self.components,components):
 			rename[c] = cname
 		self.data.rename(rename,axis=1,inplace=True)
 		self.cycles = cycles
 		self.components = components
-	
-	def plot(self,title=None,peaklabels=None,labeloffset=(0.1,0.1),lw=2,cyclw=1,fs=12,fontweight='bold',xint=5,xmin=None,yticks=False):
+
+	def plot(self,title=None,peaklabels=None,labeloffset=(0.1,0.1),fs=12,fontweight='bold',xint=5,xmin=None,yticks=False,
+			 cycle_kwargs = {'lw':1,'color':'darkgray'},
+			 component_kwargs = {'lw':2,},
+			 bg_kwargs = {'lw':2,'color':'darkslategray'},
+			 envelope_kwargs = {'lw':2,'color':'red'}):
 		'''
 		Plot all cycles, components, background, and envelope. Automatically label peaks
 		Arguments:
@@ -69,42 +73,63 @@ class casa_data():
 		title: plot title (placed in upper right corner)
 		peaklabels: list of peak labels. If None, uses dataframe component column names
 		labeloffset: label offset from peak (in fractional axes coords)
-		lw: linewidth for components, background, and envelope. Defaults to 2
-		cyclw: linewidth for cycles. Defaults to 1
 		fs: fontsize for axes labels, peak labels, and title. Tick labels are 2 points smaller. Defaults to 12
 		fontweight: fontweight for all text
 		xint: x tick interval. Defaults to 5
 		xmin: x tick start. Defaults to lowest integer within xlim
 		yticks: If True, show y ticks and labels in cnt/s. If False, don't show y ticks
+		cycle_kwargs: plotting kwargs for cycle (measured data)
+		component_kwargs: plotting kwargs for components (fitted peaks)
+		bg_kwargs: plotting kwargs for background
+		enevelope_kwargs: plotting kwargs for envelope (total fit)
 		'''
 		fig, ax = plt.subplots()
 		for cyc in self.cycles:
-			ax.plot(self.data['BE'],self.data[cyc],color='darkgray',lw=cyclw)
+			ax.plot(self.data['BE'],self.data[cyc],**cycle_kwargs)
+		
+		#plot and label peaks
+		labelycoords = [] #track y coords of labels
+		#get x and y offsets
+		xrng = abs(ax.get_xlim()[0] - ax.get_xlim()[1])
+		yrng = abs(ax.get_ylim()[0] - ax.get_ylim()[1])
+		xoffset = labeloffset[0]*xrng
+		yoffset = labeloffset[1]*yrng
+		
 		for i,comp in enumerate(self.components):
-			ax.plot(self.data['BE'],self.data[comp],lw=lw)
-			#label peaks
+			ax.plot(self.data['BE'],self.data[comp],**component_kwargs)
 			idx = self.data[comp].idxmax() #peakutils.indexes(self.data[comp],thres=0.9)[0]
 			xval = self.data['BE'][idx]
 			yval = self.data[comp][idx]
-			xrng = abs(ax.get_xlim()[0] - ax.get_xlim()[1])
-			yrng = abs(ax.get_ylim()[0] - ax.get_ylim()[1])
-			xoffset = labeloffset[0]*xrng
-			yoffset = labeloffset[1]*yrng
+			
 			if peaklabels==None:
 				ax.annotate(comp,xy=(xval+xoffset/5,yval+yoffset/5),xytext=(xval + xoffset,yval + yoffset),
 							horizontalalignment='center',arrowprops={'arrowstyle':'-'},fontsize=fs,fontweight='bold')
 			else:
 				ax.annotate(peaklabels[i],xy=(xval+xoffset/5,yval+yoffset/5),xytext=(xval + xoffset,yval + yoffset),
 							horizontalalignment='center',arrowprops={'arrowstyle':'-'},fontsize=fs,fontweight='bold')
-		if len(self.components) > 0:
-			ax.plot(self.data['BE'],self.data['Background'],color='gray',lw=lw)
-			ax.plot(self.data['BE'],self.data['Envelope'],color='red',lw=lw)
+			labelycoords.append(yval + yoffset)	 
+		if len(labelycoords) > 0:
+			labelymax = max(labelycoords)
+		else:
+			labelymax = None
 		
+		#if fitted, plot background and envelope
+		if len(self.components) > 0:
+			ax.plot(self.data['BE'],self.data['Background'],**bg_kwargs)
+			ax.plot(self.data['BE'],self.data['Envelope'],**envelope_kwargs)
+			
+		#rescale y-axis to make space for labels
+		if labelymax is not None:
+			ymin, ymax = ax.get_ylim()
+			ypad = 0.15
+			if ymax < labelymax + yrng*ypad:
+				ax.set_ylim((ymin,labelymax + yrng*ypad))
+
 		ax.set_xlim([self.data['BE'].min(),self.data['BE'].max()])
 		ax.invert_xaxis()
-		
+
 		ax.set_xlabel('Binding Energy (eV)',fontsize=fs,fontweight='bold')
-		
+
 		#tick formatting
 		tickfd = {'fontweight':fontweight,'fontsize':fs-2}
 		if xmin==None:
@@ -117,8 +142,8 @@ class casa_data():
 			ax.xaxis.set_major_formatter(FormatStrFormatter('%g'))
 		else:
 			ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
-		
-		
+
+
 		if yticks==True:
 			ax.set_yticklabels(ax.get_yticks(),fontdict=tickfd)
 			ax.set_ylabel('Intensity (cnt/s)',fontsize=fs,fontweight='bold')
@@ -126,9 +151,8 @@ class casa_data():
 		else:
 			ax.set_yticks([])
 			ax.set_ylabel('Intensity (a.u.)',fontsize=fs,fontweight='bold')
-		
+
 		if title is not None:
 			ax.set_title(title, fontsize=fs, fontweight=fontweight,x=0.92,y=0.9)
-		
+
 		return fig, ax
-				
