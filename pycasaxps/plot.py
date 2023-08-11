@@ -116,19 +116,20 @@ class CasaData:
             xval = self.data['BE'][idx]
             yval = self.data[comp][idx]
 
+            label = ''
             if peaklabels is None:
-                ax.annotate(comp, xy=(xval+xoffset/5, yval+yoffset/5),
-                            xytext=(xval + xoffset, yval + yoffset),
+                label = comp
+            elif peaklabels != []:
+                label = peaklabels[i]
+
+            if label != '':
+                ax.annotate(label, xy=(xval + xoffset/5, yval + yoffset/5),
+                            xytext=(xval+xoffset, yval+yoffset),
                             horizontalalignment='center',
                             arrowprops={'arrowstyle': '-'}, fontsize=fs,
                             fontweight='bold')
-            else:
-                ax.annotate(peaklabels[i], xy=(xval+xoffset/5, yval+yoffset/5),
-                            xytext=(xval + xoffset, yval + yoffset),
-                            horizontalalignment='center',
-                            arrowprops={'arrowstyle': '-'}, fontsize=fs,
-                            fontweight='bold')
-            labelycoords.append(yval + yoffset)
+                labelycoords.append(yval+yoffset)
+
         if len(labelycoords) > 0:
             labelymax = max(labelycoords)
         else:
