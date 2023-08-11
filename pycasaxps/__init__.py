@@ -1,1 +1,1 @@
-from .plot import casa_data
+from .plot import CasaData

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 #import peakutils
 
-class casa_data():
+class CasaData:
 	'''
 	Class for CasaXPS data. Reads exported ASCII file and provides convenient plotting function
 	Arguments:
