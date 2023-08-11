@@ -52,7 +52,7 @@ class CasaData:
         '''
 
         rename = {}
-        if cycles == None:
+        if cycles is None:
             cycles = []
             for i, c in enumerate(self.cycles):
                 cyc = 'Cycle{}'.format(i)
@@ -116,7 +116,7 @@ class CasaData:
             xval = self.data['BE'][idx]
             yval = self.data[comp][idx]
 
-            if peaklabels == None:
+            if peaklabels is None:
                 ax.annotate(comp, xy=(xval+xoffset/5, yval+yoffset/5),
                             xytext=(xval + xoffset, yval + yoffset),
                             horizontalalignment='center',
@@ -153,7 +153,7 @@ class CasaData:
 
         # tick formatting
         tickfd = {'fontweight': fontweight, 'fontsize': fs-2}
-        if xmin == None:
+        if xmin is None:
             xmin = np.ceil(ax.get_xlim()[1])
         xmax = np.floor(ax.get_xlim()[0])
         xticks = np.arange(xmin, xmax+0.1, xint)
@@ -164,7 +164,7 @@ class CasaData:
         else:
             ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
-        if yticks == True:
+        if yticks:
             ax.set_yticklabels(ax.get_yticks(), fontdict=tickfd)
             ax.set_ylabel('Intensity (cnt/s)', fontsize=fs, fontweight='bold')
             ax.yaxis.set_major_formatter(FormatStrFormatter('%g'))
