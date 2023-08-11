@@ -69,7 +69,7 @@ class CasaData:
         self.components = components
 
     def plot(self, title=None, peaklabels=None, labeloffset=(0.1, 0.1), fs=12,
-             fontweight='bold', xint=5, xmin=None, yticks=False,
+             fontweight='bold', xint=5, xmin=None, yticks=False, fig_ax=None,
              cycle_kwargs={'lw': 1, 'color': 'darkgray'},
              component_kwargs={'lw': 2, },
              bg_kwargs={'lw': 2, 'color': 'darkslategray'},
@@ -91,13 +91,19 @@ class CasaData:
         xmin: x tick start. Defaults to lowest integer within xlim
         yticks: If True, show y ticks and labels in cnt/s. If False, don't
         show y ticks.
+        fix_ax: Tuple of the form (fig, ax) to use in plotting. If not passed
+        in, a new fig and ax will be created and returned.
         cycle_kwargs: plotting kwargs for cycle (measured data)
         component_kwargs: plotting kwargs for components (fitted peaks)
         bg_kwargs: plotting kwargs for background.
         enevelope_kwargs: plotting kwargs for envelope (total fit).
         '''
 
-        fig, ax = plt.subplots()
+        if fig_ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig, ax = fig_ax
+
         for cyc in self.cycles:
             ax.plot(self.data['BE'], self.data[cyc], **cycle_kwargs)
 
