@@ -70,6 +70,7 @@ class CasaData:
 
     def plot(self, title=None, peaklabels=None, labeloffset=(0.1, 0.1), fs=12,
              fontweight='bold', xint=5, xmin=None, yticks=False, fig_ax=None,
+             labelxaxis=True,
              cycle_kwargs={'lw': 1, 'color': 'darkgray'},
              component_kwargs={'lw': 2, },
              bg_kwargs={'lw': 2, 'color': 'darkslategray'},
@@ -161,7 +162,9 @@ class CasaData:
         ax.set_xlim([self.data['BE'].min(), self.data['BE'].max()])
         ax.invert_xaxis()
 
-        ax.set_xlabel('Binding Energy (eV)', fontsize=fs, fontweight='bold')
+        if labelxaxis:
+            ax.set_xlabel('Binding Energy (eV)', fontsize=fs,
+                          fontweight='bold')
 
         # tick formatting
         tickfd = {'fontweight': fontweight, 'fontsize': fs-2}
