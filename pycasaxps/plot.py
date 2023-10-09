@@ -16,7 +16,7 @@ class CasaData:
     file: ASCII data file to read
     '''
 
-    def __init__(self, file):
+    def __init__(self, file, rename=True):
         self.data = pd.read_csv(file, skiprows=6, sep='\t')
         # remove extra columns (due to extraneous tabs in header row)
         unnamed = [c for c in self.data.columns if c[0:8] == 'Unnamed:']
@@ -29,6 +29,8 @@ class CasaData:
         else:
             self.components = []
         self.data.rename({'B.E.': 'BE'}, axis=1, inplace=True)
+        if rename:
+            self.rename()
 
     @property
     def peaks(self):
@@ -41,7 +43,7 @@ class CasaData:
             peaks[comp] = (self.data['BE'][idx], self.data[comp][idx])
         return peaks
 
-    def rename(self, components, cycles=None):
+    def rename(self, components=None, cycles=None):
         '''
         Rename columns in dataframe.
         Arguments:
@@ -61,12 +63,14 @@ class CasaData:
         else:
             for i, c in enumerate(self.cycles):
                 rename[c] = cycles[i]
-
-        for c, cname in zip(self.components, components):
-            rename[c] = cname
-        self.data.rename(rename, axis=1, inplace=True)
         self.cycles = cycles
-        self.components = components
+
+        if components is not None:
+            for c, cname in zip(self.components, components):
+                rename[c] = cname
+            self.components = components
+
+        self.data.rename(rename, axis=1, inplace=True)
 
     def plot(self, title=None, peaklabels=None, labeloffset=(0.1, 0.1), fs=12,
              fontweight='bold', xint=5, xmin=None, yticks=False, fig_ax=None,
