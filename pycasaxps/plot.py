@@ -72,6 +72,21 @@ class CasaData:
 
         self.data.rename(rename, axis=1, inplace=True)
 
+    def crop(self, be_min, be_max):
+        '''Removes portions of the dataset outside of the specfied BE range.'''
+        self.data = self.data[(self.data['BE'] > be_min)
+                              & (self.data['BE'] < be_max)]
+
+    def filter_comps(self, name):
+        '''
+        Removes components from the dataset that do not match the search term
+        `name`.
+        '''
+        for comp in self.components:
+            if name not in comp:
+                self.data.pop(comp)
+                self.components = self.components.drop(comp)
+
     def plot(self, title=None, peaklabels=None, labeloffset=(0.1, 0.1), fs=12,
              fontweight='bold', xint=5, xmin=None, yticks=False, fig_ax=None,
              labelxaxis=True,
