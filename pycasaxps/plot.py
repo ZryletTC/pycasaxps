@@ -88,8 +88,9 @@ class CasaData:
                 self.components = self.components.drop(comp)
 
     def plot(self, title=None, peaklabels=None, labeloffset=(0.1, 0.1), fs=12,
-             fontweight='bold', xint=5, xmin=None, yticks=False, fig_ax=None,
-             labelxaxis=True, scatter_cycles=False, fill_comps=False,
+             fontweight='bold', fontname='Arial', xint=5, xmin=None,
+             yticks=False, fig_ax=None, labelxaxis=True,
+             scatter_cycles=False, fill_comps=False,
              cycle_kwargs={'lw': 1, 'color': 'darkgray'},
              component_kwargs={'lw': 2, },
              bg_kwargs={'lw': 2, 'color': 'darkslategray'},
@@ -190,10 +191,11 @@ class CasaData:
 
         if labelxaxis:
             ax.set_xlabel('Binding Energy (eV)', fontsize=fs,
-                          fontweight='bold')
+                          fontweight='bold', fontname=fontname)
 
         # tick formatting
-        tickfd = {'fontweight': fontweight, 'fontsize': fs-2}
+        tickfd = {'fontweight': fontweight, 'fontsize': fs-2,
+                  'fontname': fontname}
         if xmin is None:
             xmin = np.ceil(ax.get_xlim()[1])
         xmax = np.floor(ax.get_xlim()[0])
@@ -207,14 +209,17 @@ class CasaData:
 
         if yticks:
             ax.set_yticklabels(ax.get_yticks(), fontdict=tickfd)
-            ax.set_ylabel('Intensity (cnt/s)', fontsize=fs, fontweight='bold')
+            ax.set_ylabel('Intensity (cnt/s)', fontsize=fs, fontweight='bold',
+                          fontname=fontname)
             ax.yaxis.set_major_formatter(FormatStrFormatter('%g'))
         else:
             ax.set_yticks([])
-            ax.set_ylabel('Intensity (a.u.)', fontsize=fs, fontweight='bold')
+            ax.set_ylabel('Intensity (a.u.)', fontsize=fs, fontweight='bold',
+                          fontname=fontname)
 
         if title is not None:
             ax.set_title(title, fontsize=fs, fontweight=fontweight,
-                         x=0.92, y=0.9)
+                         fontname=fontname, loc='right', x=0.98, y=0.94,
+                         horizontalalignment='right', verticalalignment='top')
 
         return fig, ax
