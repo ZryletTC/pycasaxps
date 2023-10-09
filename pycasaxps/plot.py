@@ -103,21 +103,27 @@ class CasaData:
         ----------
         title: plot title (placed in upper right corner)
         peaklabels: list of peak labels. If None, uses dataframe component
-        column names.
+            column names.
         labeloffset: label offset from peak (in fractional axes coords)
         fs: fontsize for axes labels, peak labels, and title. Tick labels are
-        2 points smaller. Defaults to 12.
-        fontweight: fontweight for all text
-        xint: x tick interval. Defaults to 5
-        xmin: x tick start. Defaults to lowest integer within xlim
-        yticks: If True, show y ticks and labels in cnt/s. If False, don't
-        show y ticks.
+            2 points smaller. Defaults to 12.
+        fontweight: fontweight for all text. Defaults to bold.
+        fontname: fontname for all text. Defaults to Arial.
+        xint: x tick interval. Defaults to 5.
+        xmin: x tick start. Defaults to lowest integer within xlim.
+        yticks: If True, show y ticks and labels in cnt/s. Defaults to False.
         fix_ax: Tuple of the form (fig, ax) to use in plotting. If not passed
-        in, a new fig and ax will be created and returned.
+            in, a new fig and ax will be created and returned.
+        labelxaxis: If True, display label for x axis. Defaults to True.
+        scatter_cycles: If True, cycle data will be plotted as scatter points.
+            If False, it will be plotted as a line. Defaults to False.
+        fill_comps: If True, components will be plotted as shading between the
+            component and the background. If False, the component will simply
+            be plotted as a line. Defaults to False.
         cycle_kwargs: plotting kwargs for cycle (measured data)
         component_kwargs: plotting kwargs for components (fitted peaks)
         bg_kwargs: plotting kwargs for background.
-        enevelope_kwargs: plotting kwargs for envelope (total fit).
+        envelope_kwargs: plotting kwargs for envelope (total fit).
         '''
 
         if fig_ax is None:
