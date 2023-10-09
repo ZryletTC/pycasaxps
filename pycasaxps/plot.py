@@ -89,7 +89,7 @@ class CasaData:
 
     def plot(self, title=None, peaklabels=None, labeloffset=(0.1, 0.1), fs=12,
              fontweight='bold', xint=5, xmin=None, yticks=False, fig_ax=None,
-             labelxaxis=True,
+             labelxaxis=True, scatter_cycles=False, fill_comps=False,
              cycle_kwargs={'lw': 1, 'color': 'darkgray'},
              component_kwargs={'lw': 2, },
              bg_kwargs={'lw': 2, 'color': 'darkslategray'},
@@ -125,7 +125,10 @@ class CasaData:
             fig, ax = fig_ax
 
         for cyc in self.cycles:
-            ax.plot(self.data['BE'], self.data[cyc], **cycle_kwargs)
+            if scatter_cycles:
+                ax.plot(self.data['BE'], self.data[cyc], '.', **cycle_kwargs)
+            else:
+                ax.plot(self.data['BE'], self.data[cyc], **cycle_kwargs)
 
         # plot and label peaks
         labelycoords = []  # track y coords of labels
@@ -141,7 +144,11 @@ class CasaData:
             else:
                 comp_kwargs = component_kwargs
 
-            ax.plot(self.data['BE'], self.data[comp], **comp_kwargs)
+            if fill_comps:
+                ax.fill_between(self.data['BE'], self.data['Background'],
+                                self.data[comp], **comp_kwargs, alpha=0.3)
+            else:
+                ax.plot(self.data['BE'], self.data[comp], **comp_kwargs)
             # peakutils.indexes(self.data[comp],thres=0.9)[0]
             idx = self.data[comp].idxmax()
             xval = self.data['BE'][idx]
