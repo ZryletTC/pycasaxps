@@ -116,7 +116,12 @@ class CasaData:
         yoffset = labeloffset[1]*yrng
 
         for i, comp in enumerate(self.components):
-            ax.plot(self.data['BE'], self.data[comp], **component_kwargs)
+            if type(component_kwargs) == list:
+                comp_kwargs = component_kwargs[i]
+            else:
+                comp_kwargs = component_kwargs
+
+            ax.plot(self.data['BE'], self.data[comp], **comp_kwargs)
             # peakutils.indexes(self.data[comp],thres=0.9)[0]
             idx = self.data[comp].idxmax()
             xval = self.data['BE'][idx]
